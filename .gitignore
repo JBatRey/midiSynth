@@ -1,0 +1,11 @@
+# Ignore folder1 and folder2
+env/
+__pycache__/
+made_tracks/
+_pycache_/
+ui/
+
+
+# Ignore all .wav files
+*.wav
+*.npy
