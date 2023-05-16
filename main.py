@@ -39,7 +39,7 @@ class myApp(QtWidgets.QMainWindow, mainwin.Ui_MainWindow):
             self.tracklist = backend.pickUpTrackInfo(midi_path)
             self.addTrack()
 
-    def errorWindowPopUp(error_message = "An error occurred!"):  
+    def errorWindowPopUp(self, error_message = "An error occurred!"):  
         message_box = QMessageBox()
         message_box.setIcon(QMessageBox.Critical)
         message_box.setWindowTitle("Error")

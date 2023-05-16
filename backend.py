@@ -119,7 +119,8 @@ def synthesizeSong(tracks, trackespecifications, outname):
         print('')#for printing purposes
         for note in track[2]:
             
-            print(str(currentNoteNumber), '/'+ str(noteQuant)+'- track: '+ str(i))#for printing purposes
+            print(str(currentNoteNumber), '/'+ str(noteQuant)+'- track: '+ 
+            str(specs['index']) + ' ' + specs['instrument'])#for printing purposes
             sys.stdout.write("\033[F") # Cursor up one line
             currentNoteNumber += 1#for printing purposes
 
@@ -131,18 +132,12 @@ def synthesizeSong(tracks, trackespecifications, outname):
                 continue #if the note has no duration we don't add anything to the track
 
             instrument_note = instrfunc(pitch, duration, samplerate)
+            instrument_note2 = instrument_note/np.max(np.abs(instrument_note))
             offset = int((abs_time)*samplerate)
-            try:
-                rightpad = data.size-offset-instrument_note.size
-            except:
-                m=1
+            
+            for i, data in enumerate(instrument_note2):
+                base_track_arr[offset+i] = data
 
-            if rightpad>0:
-                instrument_note2 = np.pad(instrument_note, (offset, rightpad))
-            else:
-                instrument_note2 = np.concatenate((np.zeros(offset), instrument_note))[:data.size]
-
-            base_track_arr += instrument_note2/np.max(np.abs(instrument_note))
 
         if specs["echo"] and specs["echoval"]==1:
             base_track_arr=echo(base_track_arr)
@@ -158,9 +153,10 @@ def synthesizeSong(tracks, trackespecifications, outname):
 
     norm_data = np.int16(data / np.max(np.abs(data)) * 32767)
 
-    if outname[-4:] != '.wav':
+    if outname == '': outname = 'output.wav'
+    elif len(outname)<5 or outname[-4:] != '.wav':
         outname +='.wav'
-        
+
     writewav(outname, 44100, norm_data)
 
     print('')
