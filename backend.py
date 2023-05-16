@@ -135,8 +135,8 @@ def synthesizeSong(tracks, trackespecifications, outname):
             instrument_note2 = instrument_note/np.max(np.abs(instrument_note))
             offset = int((abs_time)*samplerate)
             
-            for i, data in enumerate(instrument_note2):
-                base_track_arr[offset+i] = data
+            for i, d in enumerate(instrument_note2):
+                base_track_arr[offset+i] = d
 
 
         if specs["echo"] and specs["echoval"]==1:

@@ -82,13 +82,14 @@ def guitar_raw(note_freq, n=3, samplerate=44100):
     else:
       m=1
       
-    if i-p-1>0:
-      y[i] = (y[i-p] + y[i-p-1])*m/2 
+    if i-p-2>0:
+      y[i] = (y[i-p] + y[i-p-1] +y[i-p-2])*m/3
+    elif i-p-1>0:
+      y[i] = (y[i-p] + y[i-p-1])/3
     else:
-      y[i] = y[i-p]*m/2
+      y[i] = (y[i-p])/3
     
   return y
-
 #play guitar note
 
 guitar_notes=None

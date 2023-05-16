@@ -9,3 +9,4 @@ ui/
 # Ignore all .wav files
 *.wav
 *.npy
+*.ipynb
