@@ -7,20 +7,25 @@ import mainwin
 from track_widget import *
 import backend
 
+def set_font_size(widget, font_size):
+    font = widget.font()
+    font.setPointSize(font_size)
+    widget.setFont(font)
+
+    for child_widget in widget.findChildren(QWidget):
+        set_font_size(child_widget, font_size)
 
 class myApp(QtWidgets.QMainWindow, mainwin.Ui_MainWindow):
     def __init__(self, parent=None):
         super(myApp, self).__init__(parent)
         self.setupUi(self)
-        self.resize(1000,1000)
+        self.resize(800,800)
         self.scrollArea.setWidgetResizable(True)
         self.scroll_layout = QVBoxLayout(self.scrollAreaWidgetContents)
         self.pushButton.clicked.connect(self.openFileDialog)
         self.synth_button.clicked.connect(self.synthSong)
         backend.initFunc()
-
-
-        
+  
     def openFileDialog(self):
         options = QFileDialog.Options()
         file_dialog = QFileDialog()
@@ -52,8 +57,7 @@ class myApp(QtWidgets.QMainWindow, mainwin.Ui_MainWindow):
         for element in self.tracklist:
             if element[2] != []:
                 track_widget = TrackWidget(element[1], element[0])
-                track_widget.setMinimumHeight(300) 
-                track_widget.setMaximumHeight(300) 
+                set_font_size(track_widget, 10)
                 self.scroll_layout.addWidget(track_widget)
 
     def clear_layout(self,layout):
@@ -84,11 +88,16 @@ class myApp(QtWidgets.QMainWindow, mainwin.Ui_MainWindow):
         except:
             self.errorWindowPopUp("Error while processing!")
 
+
+
 def main():
     app = QApplication(sys.argv)
     qdarktheme.setup_theme()
 
+    app.setWindowIcon(QtGui.QIcon('logo.png'))
     form = myApp()
+    # Increase font size inside all widgets
+    set_font_size(form, 10)
     form.show()
     app.exec_()
 

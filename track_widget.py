@@ -5,6 +5,7 @@ class TrackWidget(QFrame):
         self.name = track_name
         self.num = track_number
         super().__init__()
+        self.setFixedHeight(200)
         self.initUI()
 
     def initUI(self):
@@ -40,7 +41,7 @@ class TrackWidget(QFrame):
         volume_layout = QHBoxLayout()
         layout.addLayout(volume_layout)
 
-        volume_label = QLabel("VOLUME = 0", self)
+        volume_label = QLabel("Volume = 0", self)
         volume_layout.addWidget(volume_label)
 
         self.volume_slider = QSlider(self)
@@ -63,11 +64,11 @@ class TrackWidget(QFrame):
 
         self.echo_layout = QHBoxLayout()
         
-        echo_label = QLabel("ECHO EFFECT: ", self)
+        echo_label = QLabel("Echo effect: ", self)
         self.echo_layout.addWidget(echo_label)
         self.echo_toggleon = QCheckBox("ON", self)
         self.echo_layout.addWidget(self.echo_toggleon)
-        echo_number_label = QLabel("ECHO NUMBER: ", self)
+        echo_number_label = QLabel("Repetitions: ", self)
         self.echo_layout.addWidget(echo_number_label)
 
         self.radio_button1 = QRadioButton("1", self)
@@ -76,14 +77,14 @@ class TrackWidget(QFrame):
         self.echo_layout.addWidget(self.radio_button1)
         self.echo_layout.addWidget(self.radio_button2)
 
-        echo_delay_label = QLabel("delay [ms]: ", self)
+        echo_delay_label = QLabel("Delay [ms]: ", self)
         self.echo_layout.addWidget(echo_delay_label) 
         self.echo_delay_spinbox = QSpinBox()
         self.echo_layout.addWidget(self.echo_delay_spinbox) 
         self.echo_delay_spinbox.setRange(100, 5000)    # f flanger (~ 1Hz)
         self.echo_delay_spinbox.setValue(500)
 
-        echo_decay_label = QLabel("decay: ", self)
+        echo_decay_label = QLabel("Decay: ", self)
         self.echo_layout.addWidget(echo_decay_label) 
         self.echo_decay_spinbox = QDoubleSpinBox()
         self.echo_layout.addWidget(self.echo_decay_spinbox) 
@@ -93,7 +94,7 @@ class TrackWidget(QFrame):
 
         self.flanger_layout = QHBoxLayout()
         
-        flanger_label = QLabel("FLANGER EFFECT: ", self)
+        flanger_label = QLabel("Flanger Effect: ", self)
         self.flanger_layout.addWidget(flanger_label)
         self.flanger_toggleon = QCheckBox("ON", self)
         self.flanger_layout.addWidget(self.flanger_toggleon)
@@ -115,13 +116,13 @@ class TrackWidget(QFrame):
 
         self.wahwah_layout = QHBoxLayout()
         
-        wahwah_label = QLabel("WAHWAH EFFECT: ", self)
+        wahwah_label = QLabel("WahWah Effect: ", self)
         self.wahwah_layout.addWidget(wahwah_label)
         self.wahwah_toggleon = QCheckBox("ON", self)
         self.wahwah_layout.addWidget(self.wahwah_toggleon)
 
         
-        wah_freq_label = QLabel("wah freq [Hz]: ", self)
+        wah_freq_label = QLabel("Wah freq [Hz]: ", self)
         self.wahwah_layout.addWidget(wah_freq_label) 
         self.wah_freq_spinbox = QSpinBox()
         self.wahwah_layout.addWidget(self.wah_freq_spinbox) 
@@ -129,7 +130,7 @@ class TrackWidget(QFrame):
         self.wah_freq_spinbox.setValue(2000)
 
 
-        wah_damping_label = QLabel("damping factor: ", self)
+        wah_damping_label = QLabel("Damping Factor: ", self)
         self.wahwah_layout.addWidget(wah_damping_label) 
         self.wah_damping_spinbox = QDoubleSpinBox()
         self.wahwah_layout.addWidget(self.wah_damping_spinbox) 
@@ -150,8 +151,10 @@ class TrackWidget(QFrame):
     def toggleLayout(self):
         if self.effectswidget.isVisible():
             self.effectswidget.setVisible(False)
+            self.setFixedHeight(200)
         else:
             self.effectswidget.setVisible(True)
+            self.setFixedHeight(300)
 
     def get_track_label_text(self):
         return self.track_label.text()
@@ -229,3 +232,4 @@ class TrackWidget(QFrame):
             }
 
         return trackSpecs
+
