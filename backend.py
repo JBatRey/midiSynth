@@ -139,14 +139,14 @@ def synthesizeSong(tracks, trackespecifications, outname):
                 base_track_arr[offset+i] = d
 
 
-        if specs["echo"] and specs["echoval"]==1:
-            base_track_arr=echo(base_track_arr)
+        if specs["echo"] and specs["echoval"]==1:    
+            base_track_arr=echo(base_track_arr, specs["echodelay"],specs["echodecay"])
         if specs["echo"] and specs["echoval"]==2:
-            base_track_arr=echo2(base_track_arr)
+            base_track_arr=echo2(base_track_arr, specs["echodelay"],specs["echodecay"])
         if specs["flanger"]:
-            base_track_arr=flanger(base_track_arr)
+            base_track_arr=flanger(base_track_arr, specs["flangermaxdelay"], specs["flangerfreq"])
         if specs["wahwah"]:
-            base_track_arr=wahwah(base_track_arr)
+            base_track_arr=wahwah(base_track_arr, specs["wahdamp"], specs["wahfreq"])
 
         track_volume = specs["volume"]
         data += base_track_arr*track_volume/100 #we scale the track by track volume and add it to main audio array

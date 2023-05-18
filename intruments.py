@@ -5,6 +5,7 @@ import scipy.io.wavfile as wavfile
 from scipy.signal import butter, filtfilt, resample
 from scipy.fft import fft, ifft
 import pytsmod as tsm
+from scipy.io.wavfile import write as writewav
 
 
 #create clarinet notes if they do not exist yet
@@ -58,39 +59,57 @@ def create_guitar_notes():
         guitar_notes[midi_note] = note
 
     np.save('./sounds/guitar_notes.npy', guitar_notes)
+    
 
 def guitar(f, time, samplerate):
-    note =  guitar_raw(f, 3, 20000)
-    return librosa.resample(note, orig_sr = 20000, target_sr=44100)
+    if f>900:
+        note =  guitar_raw(f, 3, 150000, noise='uniform')
+        ret = librosa.resample(note, orig_sr = 150000, target_sr=44100)
+    elif f>500:
+        note =  guitar_raw(f, 3, 100000, noise='uniform')
+        ret = librosa.resample(note, orig_sr = 100000, target_sr=44100)
+    else:
+        note =  guitar_raw(f, 3, 44100, noise='uniform')
+        ret = note
+
+    return ret 
   
-def guitar_raw(note_freq, n=3, samplerate=44100): 
+#Según el dibujo de Jacoby usamos R = 1 y L es p
+def guitar_raw(note_freq, n=3, samplerate=44100, noise = 'normal'): 
   p = int((samplerate/note_freq)-1/2) 
-  #print(p)
-  #print(samplerate/(p+1/2))
-  t = np.linspace(0,4, samplerate*n)
 
-  y = np.zeros(samplerate*n)
+  #Con la distribución normal se escucha un poco más fuerte, con más ataque
+  if noise == 'normal':
+    x = np.random.normal(0,1,p)
+  else:
+    x = np.random.uniform(-1,1,p)
 
-  for i in range(p):
-    A = 1*np.random.choice([-1,1]) #for -p<=t<=0
-    y[i] = A*np.sin((2*np.pi/p)*i)
+  x = np.concatenate((x,np.zeros(n*samplerate-p)))
 
-  for i in range(p,samplerate*n):
-    #Notas graves
-    if note_freq < 200:
-      m=0.98
-    else:
-      m=1
-      
-    if i-p-2>0:
-      y[i] = (y[i-p] + y[i-p-1] +y[i-p-2])*m/3
-    elif i-p-1>0:
-      y[i] = (y[i-p] + y[i-p-1])/3
-    else:
-      y[i] = (y[i-p])/3
-    
+  y = np.zeros(n*samplerate) 
+
+  if note_freq < 100:
+    for i in range(samplerate*n):
+        if i-p-1 > 0:
+            y[i] = (x[i-1]+x[i])/2 + 0.97*(y[i-p-1]+y[i-p])/2
+        else:
+            y[i] = x[i]/2
+  elif note_freq>500:
+    s = 0.5
+    for i in range(samplerate*n):
+        if i-p-1 > 0:
+            y[i] = (x[i-1]+x[i])/2 + ((1-s)*y[i-p-1]+s*y[i-p])
+        else:
+            y[i] = x[i]/2
+  else:
+    for i in range(samplerate*n):
+        if i-p-1 > 0:
+            y[i] = (x[i-1]+x[i])/2 + (y[i-p-1]+y[i-p])/2
+        else:
+            y[i] = x[i]/2
+
+
   return y
-#play guitar note
 
 guitar_notes=None
 first_call_guit = True
@@ -114,8 +133,8 @@ def snaredrum2(note, time, samplerate):
     
 
 def snaredrum(note, time, samplerate):
-  drumnote = drums_notes(200, samplerate)
-  return librosa.resample(drumnote, orig_sr = 20000, target_sr=44100)
+  drumnote = drums_notes(200)
+  return drumnote
 
 
 def create_snare_notes():
@@ -130,13 +149,12 @@ def tomtom2(note, time, samplerate):
     if first_call_tomtom:
         tomtom_notes = np.load('./sounds/tomtom_notes.npy')
         first_call_tomtom = False
-
     return tomtom_notes
 
 
 def tomtom(note, time, samplerate):
-  drumnote = drums_notes(20, samplerate)
-  return librosa.resample(drumnote, orig_sr = 20000, target_sr=44100)
+  drumnote = drums_notes(20)
+  return drumnote
 
 def create_tomtom_notes():
     note = tomtom(0,0,44100)
@@ -144,35 +162,32 @@ def create_tomtom_notes():
 
 
 
-def drums_notes(note_freq, samplerate):
-  #p around 200 snare drum
-  #p around 20 brushed tom-tom
-
-  
-  samplerate = 20000
+def drums_notes(note_freq, n=1, samplerate=44100, noise='normal'):
   p = int((samplerate/note_freq)-1/2)  
-  t = np.linspace(0,4, samplerate*1)
 
-  y = np.zeros(samplerate*1)
+  #Con la distribución normal se escucha un poco más fuerte, con más ataque
+  if noise == 'normal':
+    x = np.random.normal(0,1,p)
+  else:
+    x = np.random.uniform(-1,1,p)
+
+  x = np.concatenate((x,np.zeros(n*samplerate-p)))  
+
+  y = np.zeros(samplerate*n)
   b = 0.5
+  
   #Increasing S increases the snare sound, allowing smaller values of p 
-  S = p*0.15
-  #print(S)
 
-  for i in range(p):
-    A = 10 #10*np.random.choice([-1,1]) #for -p<=t<=0
-    y[i] = A*np.sin((2*np.pi/p)*i)
+  decay = 1
 
-  for i in range(p,samplerate*1):
-    B = np.random.choice([1, -1, 1/2, -1/2], 1, p=[b*(1-1/S), (1-b)*(1-1/S), b/S, (1-b)/S])
-    #print(b)
-    if abs(B) == 1:
-      y[i] = B*y[i-p]
+  for i in range(samplerate*n):
+    B = np.random.choice([1, -1], p=[b, (1-b)])
+    if i-p-1 > 0:
+      y[i] = ((x[i-1]+x[i])/2 + decay*(y[i-p-1]+y[i-p])/2)*B
     else:
-      y[i] = B*(y[i-p]+y[i-p-1])
+      y[i] = x[i]*B/2
 
   return y
-
 
 def flute2(note, duration, sr):
     freq = 440*2**((note-69)/12)

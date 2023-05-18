@@ -70,34 +70,13 @@ class myApp(QtWidgets.QMainWindow, mainwin.Ui_MainWindow):
         trackinfo = []
         
         for i in range(self.scroll_layout.count()):
-
-            if (self.scroll_layout.itemAt(i).widget()):
-
-                widget = self.scroll_layout.itemAt(i).widget()
-                label = widget.get_track_label_text()
-                combo = widget.get_instrument_combo_value()
-                vol = widget.get_volume_slider_value()
-                echo = widget.get_echo_on()
-                echoval = widget.get_echo_number()
-                flanger = widget.get_flanger_on()
-                wahwah = widget.get_wahwah_on()
-
-                if label[13:15].isnumeric():
-                    ind = int(label[13:15])
-                else:
-                    ind = int(label[13])
+            trackwidget = self.scroll_layout.itemAt(i).widget()
+            if (trackwidget):
+                
+                trackSpecs = trackwidget.get_track_specs()
                                 
-            trackSpecs = {
-            'volume':vol, 
-            'instrument':combo, 
-            'index':ind, 
-            'echo':echo, 
-            'echoval':echoval, 
-            'flanger':flanger,
-            'wahwah':wahwah
-            }
-
-            trackinfo.append(trackSpecs)
+                trackinfo.append(trackSpecs)                       
+            
         try:
             backend.synthesizeSong(self.tracklist, trackinfo, self.lineEdit.text())
         except:

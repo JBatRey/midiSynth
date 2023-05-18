@@ -26,14 +26,11 @@ def echo2(track, delay_time= 250, decay_factor= 0.5):
     ret += echo_y[:-delay_samples]*decay_factor + track   # decay
     return ret
 
-    
+def flanger(input_signal, maxdelay = 10, fflanger = 0.95, gain = 0.5):
 
-#flanger
-def flanger(input_signal):
-
-    maxdelay = 10 #(< 15ms)
-    fflanger = 0.95 # (~ 1Hz)
-    gain = 0.5 #(number betweeen 0 and 1)
+    # maxdelay (< 15ms)
+    # fflanger (~ 1Hz)
+    # gain (number betweeen 0 and 1)
 
     num = int(maxdelay * 1e-3 * 44100)
     output_signal = np.zeros(len(input_signal))
@@ -46,12 +43,15 @@ def flanger(input_signal):
 
     return output_signal
 
-def wahwah(input_signal):
+def wahwah(input_signal, damp= 0.2, wahf = 2000):
 
-    damp = 0.2 # wahwah damping factor (< 0.5)
-    minf = 500 # minimum center cutoff frequency (~ 500Hz)
-    maxf = 5000 #maximum center cutoff frequency (~ 5000Hz)
-    wahf = 2000 #"wah" frequency (~ 2000Hz)
+    minf = wahf/2
+    maxf = wahf*2
+
+    # damp wahwah damping factor (< 0.5)
+    # minf minimum center cutoff frequency (~ 500Hz)
+    # maxf maximum center cutoff frequency (~ 5000Hz)
+    # wahf "wah" frequency (~ 2000Hz)
 
     output_signal = np.zeros(len(input_signal))
     outh = np.zeros(len(input_signal))
