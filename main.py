@@ -79,6 +79,8 @@ class myApp(QtWidgets.QMainWindow, mainwin.Ui_MainWindow):
             
         try:
             backend.synthesizeSong(self.tracklist, trackinfo, self.lineEdit.text())
+            if self.sprectro_checkbox.isChecked():
+                print("Create Spectrogram")
         except:
             self.errorWindowPopUp("Error while processing!")
 
