@@ -7,6 +7,7 @@ import mainwin
 from track_widget import *
 import backend
 
+
 def set_font_size(widget, font_size):
     font = widget.font()
     font.setPointSize(font_size)
@@ -80,13 +81,21 @@ class myApp(QtWidgets.QMainWindow, mainwin.Ui_MainWindow):
                 trackSpecs = trackwidget.get_track_specs()
                                 
                 trackinfo.append(trackSpecs)                       
-            
+        
+
+        backend.synthesizeSong(self.tracklist, trackinfo, self.lineEdit.text())
+
+            #self.errorWindowPopUp("Error while processing!")
+        
         try:
-            backend.synthesizeSong(self.tracklist, trackinfo, self.lineEdit.text())
             if self.sprectro_checkbox.isChecked():
                 print("Create Spectrogram")
+                backend.create_sprectrogram(block_size = self.spectrogram_block_size.value(), window=self.spectrogram_window_comboBox.currentText(), outname=self.lineEdit.text())
         except:
-            self.errorWindowPopUp("Error while processing!")
+            self.errorWindowPopUp("Error while creating spectrogram!")
+        
+
+
 
 
 

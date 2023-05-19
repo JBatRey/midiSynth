@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\ui\mainwin.ui'
+# Form implementation generated from reading ui file './ui/mainwin.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -59,13 +59,18 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.addWidget(self.label_2)
         self.spectrogram_window_comboBox = QtWidgets.QComboBox(self.centralwidget)
         self.spectrogram_window_comboBox.setObjectName("spectrogram_window_comboBox")
+        self.spectrogram_window_comboBox.addItem("")
+        self.spectrogram_window_comboBox.addItem("")
+        self.spectrogram_window_comboBox.addItem("")
         self.horizontalLayout_2.addWidget(self.spectrogram_window_comboBox)
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_2.addWidget(self.label_3)
-        self.doubleSpinBox = QtWidgets.QDoubleSpinBox(self.centralwidget)
-        self.doubleSpinBox.setObjectName("doubleSpinBox")
-        self.horizontalLayout_2.addWidget(self.doubleSpinBox)
+        self.spectrogram_block_size = QtWidgets.QSpinBox(self.centralwidget)
+        self.spectrogram_block_size.setMinimum(1)
+        self.spectrogram_block_size.setMaximum(8000)
+        self.spectrogram_block_size.setObjectName("spectrogram_block_size")
+        self.horizontalLayout_2.addWidget(self.spectrogram_block_size)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -98,4 +103,7 @@ class Ui_MainWindow(object):
         self.filename_label.setText(_translate("MainWindow", "No File Selected!"))
         self.sprectro_checkbox.setText(_translate("MainWindow", "Create Spectrogram"))
         self.label_2.setText(_translate("MainWindow", "Window:"))
+        self.spectrogram_window_comboBox.setItemText(0, _translate("MainWindow", "hann"))
+        self.spectrogram_window_comboBox.setItemText(1, _translate("MainWindow", "hamming"))
+        self.spectrogram_window_comboBox.setItemText(2, _translate("MainWindow", "blackman"))
         self.label_3.setText(_translate("MainWindow", "Block Size"))

@@ -2,10 +2,14 @@ import mido
 import os
 import numpy as np
 from scipy.io.wavfile import write as writewav
+import scipy 
 from intruments import *
 from effects import *
 from effects import *
 import sys
+import numpy as np
+import matplotlib.pyplot as plt
+import librosa.display
 
 
 def initFunc():
@@ -86,6 +90,7 @@ def synthesizeSong(tracks, trackespecifications, outname):
     data = np.zeros(int(np.ceil(file_len)*samplerate))    
 
 
+
     for i, track in enumerate(tracks):
 
         specs = next((d for d in trackespecifications if d.get('index') == i), None)
@@ -136,7 +141,8 @@ def synthesizeSong(tracks, trackespecifications, outname):
             offset = int((abs_time)*samplerate)
             
             for i, d in enumerate(instrument_note2):
-                base_track_arr[offset+i] = d
+                if offset+i < base_track_arr.size:
+                    base_track_arr[offset+i] = d
 
 
         if specs["echo"] and specs["echoval"]==1:    
@@ -172,7 +178,38 @@ def flen(trackInfo):
             if track_len > file_length:
                 file_length=track_len
 
-    return file_length+5
+    return file_length
+
+def create_sprectrogram(block_size = 2048, window = 'hann', outname='output.wav'):
 
 
 
+    if outname == '': outname = 'output.wav'
+    elif len(outname)<5 or outname[-4:] != '.wav':
+        outname +='.wav'
+    '''
+    sampling_rate, data = wavfile.read(outname)
+    # Configure the block size and window
+    # Choose the window type (e.g., 'hann', 'hamming', 'blackman')
+
+    # Configure the block size and window
+    block_size = 500  # Set the block size (number of samples per block)
+    window = np.hanning(block_size)  # Use np.hanning() to generate the window of the desired length
+
+    # Plot the spectrogram with custom parameters
+    plt.specgram(data, NFFT=block_size, Fs=sampling_rate, window=window)
+    plt.xlabel('Time')
+    plt.ylabel('Frequency')
+    plt.colorbar()
+    plt.show()'''
+
+    sampling_rate, audio_data = wavfile.read(outname)
+
+    # Calculate the spectrogram.
+    f, t, Sxx  = scipy.signal.spectrogram(audio_data, fs=sampling_rate, nperseg=block_size, noverlap = block_size // 2, window=window)
+    plt.pcolormesh(t, f, Sxx, shading='gouraud')
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [sec]')
+    plt.show()
+
+    plt.show()
